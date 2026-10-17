@@ -161,6 +161,10 @@ def main():
         if len(left) == len(birds):
             sys.exit(f"No bird on {a.remove}")
         save(left)
+        for b in birds:
+            p = os.path.join(HERE, b["photo"])
+            if b["date"] == a.remove and all(x["photo"] != b["photo"] for x in left) and os.path.exists(p):
+                os.remove(p)
         print(f"removed {a.remove}")
         if a.push:
             push(f"Remove bird for {a.remove}")
