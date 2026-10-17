@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bird of the Day</title>
+<meta name="description" content="One real bird photo, its name, and a fun fact every day.">
+<meta property="og:title" content="Bird of the Day">
+<meta property="og:description" content="One bird a day: a real photo, its name, and a fun fact.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://6penny6wise6.github.io/daily-birds/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f6f1e7;--card:#fbf8f2;--ink:#2a2723;--muted:#6f685d;--rule:#d9d0c0;--accent:#3f6656;--accent-soft:#e6ece6}
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Source Sans 3",system-ui,-apple-system,sans-serif}
+  .wrap{max-width:640px;margin:0 auto;padding:28px 18px 60px}
+  header{text-align:center;margin-bottom:22px}
+  .kicker{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .kicker:after{content:"";display:block;width:42px;height:1px;background:var(--accent);margin:10px auto 0}
+  .date{margin-top:10px;color:var(--muted);font-size:14px}
+  .serif{font-family:"Libre Baskerville",Georgia,serif}
+  .card{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:18px}
+  .guess{text-align:center;margin-bottom:18px}
+  .guess .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .guess .q{font-family:"Libre Baskerville",Georgia,serif;font-size:20px;line-height:1.4;margin:8px 0 12px}
+  .btn{appearance:none;border:1px solid var(--accent);background:transparent;color:var(--accent);font:600 15px "Source Sans 3",sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer}
+  .btn.solid{background:var(--accent);color:#fff}
+  .btn:active{transform:translateY(1px)}
+  .answer{display:none;margin-top:12px;color:var(--ink)}
+  .answer.show{display:block}
+  .hint{font-size:13px;color:var(--muted);margin-top:8px}
+  figure{margin:0}
+  .photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:3px;background:#e9e2d4}
+  figcaption{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
+  figcaption a{color:var(--muted)}
+  h1{font-family:"Libre Baskerville",Georgia,serif;font-weight:700;font-size:34px;line-height:1.15;margin:22px 0 2px;text-align:center}
+  .sci{font-family:"Libre Baskerville",Georgia,serif;font-style:italic;color:var(--muted);text-align:center;margin:0 0 20px}
+  .dyk{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 4px 4px 0}
+  .dyk .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .dyk p{margin:6px 0 0;font-size:18px}
+  .src{font-size:13px;color:var(--muted);margin-top:8px}
+  .src a{color:var(--accent)}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 6px}
+  .toast{text-align:center;font-size:13px;color:var(--accent);min-height:18px}
+  .nav{display:flex;justify-content:space-between;margin:10px 0 0;font-size:14px}
+  .nav a{color:var(--accent);text-decoration:none}
+  .nav a[aria-disabled=true]{visibility:hidden}
+  h2{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:center;margin:44px 0 14px}
+  .archive{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+  .archive a{display:block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+  .archive a.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .archive img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+  .archive span{display:block;padding:6px 8px 8px;font-size:13px;line-height:1.3}
+  .archive small{color:var(--muted);font-size:11px}
+  .empty{text-align:center;color:var(--muted);font-size:14px}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+  footer a{color:var(--muted)}
+  @media (min-width:600px){h1{font-size:40px}.wrap{padding-top:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Bird of the Day</div>
+    <div class="date" id="date">&nbsp;</div>
+  </header>
+  <main id="main"><p class="empty">Loading today's bird…</p></main>
+  <h2>See past birds</h2>
+  <div class="archive" id="archive"></div>
+  <footer>A new bird every day. Photos from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> under free licenses.</footer>
+</div>
+<script>
+(function(){
+  const TZ = "America/Chicago";
+  const todayStr = new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const pretty = d => new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric",timeZone:"UTC"});
+  const short = d => new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+
+  fetch("birds.json",{cache:"no-cache"}).then(r=>r.json()).then(all=>{
+    const past = all.filter(b=>b.date<=todayStr).sort((a,b)=>a.date<b.date?1:-1); // newest first, never future
+    if(!past.length){document.getElementById("main").innerHTML='<p class="empty">The first bird lands soon.</p>';return;}
+    const want = new URLSearchParams(location.search).get("d");
+    const bird = past.find(b=>b.date===want) || past[0];
+    const isToday = bird.date===todayStr;
+    const i = past.indexOf(bird), newer = past[i-1], older = past[i+1];
+    document.getElementById("date").textContent = isToday ? pretty(bird.date) : pretty(bird.date)+" · from the archive";
+    document.title = bird.name+" · Bird of the Day";
+
+    const guess = bird.question ? `
+      <section class="card guess">
+        <div class="label">Guess before you scroll</div>
+        <div class="q">${esc(bird.question)}</div>
+        <button class="btn" id="reveal">Reveal the answer</button>
+        <div class="answer" id="answer">${esc(bird.answer)}</div>
+      </section>` : "";
+    document.getElementById("main").innerHTML = `
+      ${guess}
+      <figure>
+        <img class="photo" src="${esc(bird.photo)}" alt="Photo of a ${esc(bird.name)}">
+        <figcaption>Photo: ${esc(bird.photo_credit)} · <a href="${esc(bird.photo_source_url)}" target="_blank" rel="noopener">${esc(bird.photo_license)}</a>, via Wikimedia Commons</figcaption>
+      </figure>
+      <h1>${esc(bird.name)}</h1>
+      <p class="sci">${esc(bird.scientific)}</p>
+      <section class="dyk">
+        <div class="label">Did you know?</div>
+        <p>${esc(bird.fact)}</p>
+        ${bird.source?`<div class="src">Source: <a href="${esc(bird.source)}" target="_blank" rel="noopener">${esc(new URL(bird.source).hostname.replace(/^www\./,""))}</a></div>`:""}
+      </section>
+      <div class="actions">
+        <button class="btn solid" id="share">Share this bird</button>
+        <button class="btn" id="copy">Copy link</button>
+      </div>
+      <div class="toast" id="toast"></div>
+      <div class="nav">
+        <a href="?d=${older?older.date:""}" aria-disabled="${!older}">← ${older?esc(older.name):""}</a>
+        <a href="${newer&&newer.date!==past[0].date?"?d="+newer.date:"./"}" aria-disabled="${!newer}">${newer?esc(newer.name):""} →</a>
+      </div>`;
+
+    const r = document.getElementById("reveal");
+    if(r) r.onclick = ()=>{document.getElementById("answer").classList.add("show"); r.style.display="none";};
+    const link = location.origin+location.pathname+"?d="+bird.date;
+    const toast = m => {const t=document.getElementById("toast");t.textContent=m;setTimeout(()=>t.textContent="",2500);};
+    const copy = ()=> navigator.clipboard ? navigator.clipboard.writeText(link).then(()=>toast("Link copied")) : prompt("Copy this link",link);
+    document.getElementById("copy").onclick = copy;
+    document.getElementById("share").onclick = ()=>{
+      const text = `Bird of the Day: the ${bird.name}. ${bird.fact}`;
+      if(navigator.share) navigator.share({title:"Bird of the Day",text,url:link}).catch(()=>{});
+      else copy();
+    };
+
+    document.getElementById("archive").innerHTML = past.length>1 ? past.map(b=>`
+      <a href="${b.date===past[0].date?"./":"?d="+b.date}" class="${b===bird?"current":""}">
+        <img src="${esc(b.photo)}" alt="${esc(b.name)}" loading="lazy">
+        <span>${esc(b.name)}<br><small>${short(b.date)}</small></span>
+      </a>`).join("") : '<p class="empty" style="grid-column:1/-1">Come back tomorrow, the archive grows one bird a day.</p>';
+  }).catch(()=>{document.getElementById("main").innerHTML='<p class="empty">Couldn\'t load today\'s bird. Try refreshing.</p>';});
+})();
+</script>
+</body>
+</html>
