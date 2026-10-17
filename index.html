@@ -11,68 +11,164 @@
 <meta property="og:url" content="https://6penny6wise6.github.io/daily-birds/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#05070c">
+<meta name="color-scheme" content="dark">
 <style>
-  :root{--bg:#f6f1e7;--card:#fbf8f2;--ink:#2a2723;--muted:#6f685d;--rule:#d9d0c0;--accent:#3f6656;--accent-soft:#e6ece6}
+  :root{
+    --navy-950:#05070c;--navy-900:#090c14;--navy-800:#10141f;--navy-700:#171c2b;
+    --cream-50:#faf9f6;--cream-100:#f2f0ea;
+    --slate-300:#a9b0c1;--slate-400:#7d859c;
+    --accent-300:#f6cd7a;--accent-400:#f0b94d;--accent-500:#e8a93b;
+    --line:rgba(250,249,246,.10);
+    --radius-xl:.75rem;--radius-2xl:1rem;
+    --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Source Sans 3",system-ui,-apple-system,sans-serif}
-  .wrap{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  header{text-align:center;margin-bottom:22px}
-  .kicker{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);font-weight:600}
-  .kicker:after{content:"";display:block;width:42px;height:1px;background:var(--accent);margin:10px auto 0}
-  .date{margin-top:10px;color:var(--muted);font-size:14px}
-  .serif{font-family:"Libre Baskerville",Georgia,serif}
-  .card{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:18px}
-  .guess{text-align:center;margin-bottom:18px}
-  .guess .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
-  .guess .q{font-family:"Libre Baskerville",Georgia,serif;font-size:20px;line-height:1.4;margin:8px 0 12px}
-  .btn{appearance:none;border:1px solid var(--accent);background:transparent;color:var(--accent);font:600 15px "Source Sans 3",sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer}
-  .btn.solid{background:var(--accent);color:#fff}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--navy-950);color:var(--cream-50);
+       font:400 1rem/1.5 var(--font);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--accent-400);outline-offset:3px;border-radius:6px}
+  .container{width:100%;max-width:80rem;margin:0 auto;padding:0 1.5rem}
+  @media (min-width:1024px){.container{padding:0 2rem}}
+
+  /* header */
+  .site-header{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line);background:rgba(5,7,12,.8);
+               -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .site-header .container{display:flex;align-items:center;justify-content:space-between;height:4.5rem}
+  .brand{white-space:nowrap;font-size:1.125rem;font-weight:600;letter-spacing:-.025em;text-decoration:none;color:var(--cream-50)}
+  .menu{display:flex;gap:2rem}
+  .menu a{font-size:.875rem;font-weight:500;color:var(--slate-300);text-decoration:none;transition:color .15s}
+  .menu a:hover{color:var(--cream-50)}
+  .menu a.active{color:var(--accent-400)}
+  @media (max-width:640px){.menu{gap:1.25rem}.btn.header-cta{display:none}}
+
+  /* buttons */
+  .btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:999px;
+       font:600 .875rem/1 var(--font);letter-spacing:-.025em;white-space:nowrap;cursor:pointer;text-decoration:none;
+       padding:.75rem 1.5rem;transition:all .2s;border:2px solid rgba(250,249,246,.4);background:rgba(250,249,246,.04);color:var(--cream-50)}
+  .btn:hover{border-color:var(--cream-50);background:rgba(250,249,246,.08)}
+  .btn.solid{border-color:transparent;background:var(--accent-500);color:var(--navy-950);
+             box-shadow:0 10px 15px -3px rgba(232,169,59,.2),0 4px 6px -4px rgba(232,169,59,.2)}
+  .btn.solid:hover{background:var(--accent-400)}
+  .btn.sm{padding:.5rem 1rem}
   .btn:active{transform:translateY(1px)}
-  .answer{display:none;margin-top:12px;color:var(--ink)}
-  .answer.show{display:block}
-  .hint{font-size:13px;color:var(--muted);margin-top:8px}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .grid-texture{position:absolute;inset:0;opacity:.6;pointer-events:none;
+    background-image:linear-gradient(90deg,rgba(232,169,59,.06) 1px,transparent 1px),linear-gradient(rgba(232,169,59,.06) 1px,transparent 1px);
+    background-size:48px 48px;-webkit-mask-image:linear-gradient(to bottom,#000 40%,transparent);mask-image:linear-gradient(to bottom,#000 40%,transparent)}
+  .hero .container{position:relative;display:grid;gap:2.5rem;padding-top:4rem;padding-bottom:5rem;align-items:center}
+  @media (min-width:1024px){.hero .container{grid-template-columns:1fr 1.1fr;gap:4rem;padding-top:6rem;padding-bottom:7rem}}
+  .pill{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);background:rgba(9,12,20,.6);
+        border-radius:999px;padding:.375rem 1rem;font-size:.75rem;font-weight:500;color:var(--slate-300)}
+  .pill .dot{width:.4rem;height:.4rem;border-radius:50%;background:var(--accent-400)}
+  h1{font-size:1.875rem;line-height:1.2;font-weight:600;letter-spacing:-.025em;margin:1.5rem 0 .5rem}
+  @media (min-width:640px){h1{font-size:2.25rem}}
+  @media (min-width:1024px){h1{font-size:3rem}}
+  .sci{margin:0;font-style:italic;color:var(--accent-400);font-size:1.125rem}
+  .lede{margin:1.5rem 0 0;max-width:36rem;font-size:1.125rem;line-height:1.625;color:var(--slate-300)}
+  .src{margin-top:.75rem;font-size:.875rem;color:var(--slate-400)}
+  .src a{color:var(--slate-300);text-underline-offset:3px}
+  .src a:hover{color:var(--accent-400)}
+  .actions{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2rem}
+  .toast{min-height:1.25rem;margin-top:.75rem;font-size:.875rem;color:var(--accent-400)}
   figure{margin:0}
-  .photo{width:100%;height:auto;display:block;border-radius:3px;background:#e9e2d4}
-  figcaption{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.45}
-  figcaption a{color:var(--muted)}
-  h1{font-family:"Libre Baskerville",Georgia,serif;font-weight:700;font-size:34px;line-height:1.15;margin:22px 0 2px;text-align:center}
-  .sci{font-family:"Libre Baskerville",Georgia,serif;font-style:italic;color:var(--muted);text-align:center;margin:0 0 20px}
-  .dyk{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 4px 4px 0}
-  .dyk .label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);font-weight:600}
-  .dyk p{margin:6px 0 0;font-size:18px}
-  .src{font-size:13px;color:var(--muted);margin-top:8px}
-  .src a{color:var(--accent)}
-  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 6px}
-  .toast{text-align:center;font-size:13px;color:var(--accent);min-height:18px}
-  .nav{display:flex;justify-content:space-between;margin:10px 0 0;font-size:14px}
-  .nav a{color:var(--accent);text-decoration:none}
-  .nav a[aria-disabled=true]{visibility:hidden}
-  h2{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:center;margin:44px 0 14px}
-  .archive{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-  .archive a{display:block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
-  .archive a.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-  .archive img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-  .archive span{display:block;padding:6px 8px 8px;font-size:13px;line-height:1.3}
-  .archive small{color:var(--muted);font-size:11px}
-  .empty{text-align:center;color:var(--muted);font-size:14px}
-  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
-  footer a{color:var(--muted)}
-  @media (min-width:600px){h1{font-size:40px}.wrap{padding-top:44px}}
+  .photo-frame{width:fit-content;max-width:100%;margin:0 auto;border-radius:var(--radius-2xl);overflow:hidden;border:1px solid var(--line);background:var(--navy-900);
+               box-shadow:0 25px 50px -12px rgba(0,0,0,.6)}
+  .photo{display:block;max-width:100%;width:auto;height:auto;max-height:76vh}
+  figcaption{text-align:center;margin-top:.75rem;font-size:.75rem;line-height:1.5;color:var(--slate-400)}
+  figcaption a{color:var(--slate-300);text-underline-offset:3px}
+
+  /* sections */
+  .section{padding:5rem 0}
+  @media (min-width:640px){.section{padding:6rem 0}}
+  .section.alt{background:rgba(9,12,20,.4);border-bottom:1px solid var(--line)}
+  h2{font-size:1.875rem;line-height:1.2;font-weight:600;letter-spacing:-.025em;margin:0}
+  @media (min-width:640px){h2{font-size:2.25rem}}
+  .sub{margin:.75rem 0 0;color:var(--slate-400);font-size:1rem;line-height:1.625}
+  .cards{display:grid;gap:1.5rem;margin-top:3rem}
+  @media (min-width:768px){.cards{grid-template-columns:1fr 1fr}}
+  .card{position:relative;border-radius:var(--radius-2xl);border:1px solid var(--line);background:rgba(9,12,20,.6);padding:1.5rem;
+        transition:all .2s}
+  .card:hover{transform:translateY(-4px);border-color:rgba(232,169,59,.4);background:var(--navy-900);box-shadow:0 10px 15px -3px rgba(232,169,59,.05)}
+  .num{font-size:1.875rem;font-weight:600;letter-spacing:-.025em;color:rgba(232,169,59,.6)}
+  h3{margin:.75rem 0 0;font-size:1rem;font-weight:600}
+  .card p{margin:.5rem 0 0;font-size:.875rem;line-height:1.625;color:var(--slate-300)}
+  .q{font-size:1.25rem!important;line-height:1.5!important;color:var(--cream-50)!important;font-weight:500}
+  .card .btn{margin-top:1.25rem}
+  .answer{display:none;margin-top:1rem!important;padding:1rem;border-radius:var(--radius-xl);background:rgba(232,169,59,.1);color:var(--accent-300)!important;font-size:1rem!important}
+  .answer.show{display:block}
+  .navrow{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem;font-size:.875rem;font-weight:500}
+  .navrow a{color:var(--slate-300);text-decoration:none;transition:color .15s}
+  .navrow a:hover{color:var(--accent-400)}
+  .navrow a[aria-disabled=true]{visibility:hidden}
+
+  /* archive */
+  .archive{display:grid;gap:1rem;margin-top:3rem;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  @media (min-width:1024px){.archive{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5rem}}
+  .archive a{display:block;text-decoration:none;color:var(--cream-50);border-radius:var(--radius-2xl);overflow:hidden;
+             border:1px solid var(--line);background:rgba(9,12,20,.6);transition:all .2s}
+  .archive a:hover{transform:translateY(-4px);border-color:rgba(232,169,59,.4);background:var(--navy-900)}
+  .archive a.current{border-color:var(--accent-500);box-shadow:0 0 0 1px var(--accent-500)}
+  .archive img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--navy-800)}
+  .archive span{display:block;padding:.75rem 1rem 1rem;font-size:.875rem;font-weight:600;line-height:1.35}
+  .archive small{display:block;margin-top:.25rem;font-weight:500;font-size:.75rem;color:var(--slate-400)}
+  .empty{color:var(--slate-400);font-size:.875rem}
+
+  /* glow band + footer */
+  .band{position:relative;overflow:hidden;border-top:1px solid var(--line);background:var(--navy-900);text-align:center;padding:4rem 0}
+  .band:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 50% 90% at 50% 50%,rgba(232,169,59,.16),transparent 70%)}
+  .band .container{position:relative}
+  .band p{margin:0 auto;max-width:36rem;color:var(--slate-300);font-size:1.125rem;line-height:1.625}
+  .band .actions{justify-content:center}
+  footer{border-top:1px solid var(--line);background:var(--navy-950)}
+  footer .container{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;padding-top:1.5rem;padding-bottom:1.5rem;font-size:.75rem;color:var(--slate-400)}
+  footer a{color:var(--slate-300);text-underline-offset:3px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="kicker">Bird of the Day</div>
-    <div class="date" id="date">&nbsp;</div>
-  </header>
-  <main id="main"><p class="empty">Loading today's bird…</p></main>
-  <h2>See past birds</h2>
-  <div class="archive" id="archive"></div>
-  <footer>A new bird every day. Photos from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> under free licenses.</footer>
-</div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="./">Bird of the Day</a>
+    <nav class="menu" aria-label="Main">
+      <a href="./" class="active" id="nav-today">Today</a>
+      <a href="#past">Past birds</a>
+    </nav>
+    <a class="btn solid sm header-cta" href="#" id="share-top">Share</a>
+  </div>
+</header>
+<main class="flex-1">
+  <section class="hero">
+    <div class="grid-texture" aria-hidden="true"></div>
+    <div class="container" id="main"><p class="empty">Loading today's bird…</p></div>
+  </section>
+  <section class="section alt" id="extra" hidden>
+    <div class="container" id="extra-inner"></div>
+  </section>
+  <section class="section" id="past">
+    <div class="container">
+      <h2>See past birds</h2>
+      <p class="sub">Every bird so far, newest first. Tap one to revisit it.</p>
+      <div class="archive" id="archive"></div>
+    </div>
+  </section>
+  <section class="band">
+    <div class="container">
+      <p>A new bird lands here every morning, Chicago time.</p>
+      <div class="actions"><a class="btn solid" href="./">Today's bird</a><a class="btn" href="#past">Browse the archive</a></div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="container">
+    <span>A new bird every day.</span>
+    <span>Photos from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> under free licenses.</span>
+  </div>
+</footer>
 <script>
 (function(){
   const TZ = "America/Chicago";
@@ -80,65 +176,80 @@
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const pretty = d => new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric",timeZone:"UTC"});
   const short = d => new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+  const main = document.getElementById("main");
 
   fetch("birds.json",{cache:"no-cache"}).then(r=>r.json()).then(all=>{
     const past = all.filter(b=>b.date<=todayStr).sort((a,b)=>a.date<b.date?1:-1); // newest first, never future
-    if(!past.length){document.getElementById("main").innerHTML='<p class="empty">The first bird lands soon.</p>';return;}
+    if(!past.length){main.innerHTML='<p class="empty">The first bird lands soon.</p>';return;}
     const want = new URLSearchParams(location.search).get("d");
     const bird = past.find(b=>b.date===want) || past[0];
     const isToday = bird.date===todayStr;
     const i = past.indexOf(bird), newer = past[i-1], older = past[i+1];
-    document.getElementById("date").textContent = isToday ? pretty(bird.date) : pretty(bird.date)+" · from the archive";
     document.title = bird.name+" · Bird of the Day";
+    if(!isToday) document.getElementById("nav-today").classList.remove("active");
 
-    const guess = bird.question ? `
-      <section class="card guess">
-        <div class="label">Guess before you scroll</div>
-        <div class="q">${esc(bird.question)}</div>
-        <button class="btn" id="reveal">Reveal the answer</button>
-        <div class="answer" id="answer">${esc(bird.answer)}</div>
-      </section>` : "";
-    document.getElementById("main").innerHTML = `
-      ${guess}
-      <figure>
-        <img class="photo" src="${esc(bird.photo)}" alt="Photo of a ${esc(bird.name)}">
-        <figcaption>Photo: ${esc(bird.photo_credit)} · <a href="${esc(bird.photo_source_url)}" target="_blank" rel="noopener">${esc(bird.photo_license)}</a>, via Wikimedia Commons</figcaption>
-      </figure>
-      <h1>${esc(bird.name)}</h1>
-      <p class="sci">${esc(bird.scientific)}</p>
-      <section class="dyk">
-        <div class="label">Did you know?</div>
-        <p>${esc(bird.fact)}</p>
+    main.innerHTML = `
+      <div>
+        <div class="pill"><span class="dot" aria-hidden="true"></span><span id="date">${isToday ? pretty(bird.date) : pretty(bird.date)+" · from the archive"}</span></div>
+        <h1>${esc(bird.name)}</h1>
+        <p class="sci">${esc(bird.scientific)}</p>
+        <p class="lede">${esc(bird.fact)}</p>
         ${bird.source?`<div class="src">Source: <a href="${esc(bird.source)}" target="_blank" rel="noopener">${esc(new URL(bird.source).hostname.replace(/^www\./,""))}</a></div>`:""}
-      </section>
-      <div class="actions">
-        <button class="btn solid" id="share">Share this bird</button>
-        <button class="btn" id="copy">Copy link</button>
+        <div class="actions">
+          <button class="btn solid" id="share">Share this bird</button>
+          <button class="btn" id="copy">Copy link</button>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
       </div>
-      <div class="toast" id="toast"></div>
-      <div class="nav">
-        <a href="?d=${older?older.date:""}" aria-disabled="${!older}">← ${older?esc(older.name):""}</a>
-        <a href="${newer&&newer.date!==past[0].date?"?d="+newer.date:"./"}" aria-disabled="${!newer}">${newer?esc(newer.name):""} →</a>
+      <figure>
+        <div class="photo-frame"><img class="photo" src="${esc(bird.photo)}" alt="Photo of a ${esc(bird.name)}"></div>
+        <figcaption>Photo: ${esc(bird.photo_credit)} · <a href="${esc(bird.photo_source_url)}" target="_blank" rel="noopener">${esc(bird.photo_license)}</a>, via Wikimedia Commons</figcaption>
+      </figure>`;
+
+    const extra = document.getElementById("extra");
+    document.getElementById("extra-inner").innerHTML = `
+      <h2>Did you know?</h2>
+      <div class="cards">
+        ${bird.question ? `<div class="card">
+          <div class="num">01</div>
+          <h3>Guess before you scroll</h3>
+          <p class="q">${esc(bird.question)}</p>
+          <button class="btn sm" id="reveal">Reveal the answer</button>
+          <p class="answer" id="answer">${esc(bird.answer)}</p>
+        </div>` : ""}
+        <div class="card">
+          <div class="num">${bird.question?"02":"01"}</div>
+          <h3>Keep exploring</h3>
+          <p>Step back through earlier birds, or share today's with a friend.</p>
+          <div class="navrow">
+            <a href="?d=${older?older.date:""}" aria-disabled="${!older}">← ${older?esc(older.name):""}</a>
+            <a href="${newer&&newer.date!==past[0].date?"?d="+newer.date:"./"}" aria-disabled="${!newer}">${newer?esc(newer.name):""} →</a>
+          </div>
+        </div>
       </div>`;
+    extra.hidden = false;
 
     const r = document.getElementById("reveal");
     if(r) r.onclick = ()=>{document.getElementById("answer").classList.add("show"); r.style.display="none";};
     const link = location.origin+location.pathname+"?d="+bird.date;
     const toast = m => {const t=document.getElementById("toast");t.textContent=m;setTimeout(()=>t.textContent="",2500);};
     const copy = ()=> navigator.clipboard ? navigator.clipboard.writeText(link).then(()=>toast("Link copied")) : prompt("Copy this link",link);
-    document.getElementById("copy").onclick = copy;
-    document.getElementById("share").onclick = ()=>{
+    const share = e=>{
+      if(e) e.preventDefault();
       const text = `Bird of the Day: the ${bird.name}. ${bird.fact}`;
       if(navigator.share) navigator.share({title:"Bird of the Day",text,url:link}).catch(()=>{});
       else copy();
     };
+    document.getElementById("copy").onclick = copy;
+    document.getElementById("share").onclick = share;
+    document.getElementById("share-top").onclick = share;
 
     document.getElementById("archive").innerHTML = past.length>1 ? past.map(b=>`
       <a href="${b.date===past[0].date?"./":"?d="+b.date}" class="${b===bird?"current":""}">
         <img src="${esc(b.photo)}" alt="${esc(b.name)}" loading="lazy">
-        <span>${esc(b.name)}<br><small>${short(b.date)}</small></span>
+        <span>${esc(b.name)}<small>${short(b.date)}</small></span>
       </a>`).join("") : '<p class="empty" style="grid-column:1/-1">Come back tomorrow, the archive grows one bird a day.</p>';
-  }).catch(()=>{document.getElementById("main").innerHTML='<p class="empty">Couldn\'t load today\'s bird. Try refreshing.</p>';});
+  }).catch(()=>{main.innerHTML='<p class="empty">Couldn\'t load today\'s bird. Try refreshing.</p>';});
 })();
 </script>
 </body>
