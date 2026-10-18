@@ -193,5 +193,18 @@
     "source": "https://www.allaboutbirds.org/guide/Turkey_Vulture/",
     "question": "What might a Turkey Vulture do if you get too close?",
     "answer": "Throw up on you. Considering what it eats, that's a powerful weapon."
+  },
+  {
+    "date": "2026-11-01",
+    "name": "Sandhill Crane",
+    "scientific": "Antigone canadensis",
+    "photo": "photos/sandhill-crane.jpg",
+    "photo_credit": "HappiestFish",
+    "photo_license": "CC BY 4.0",
+    "photo_source_url": "https://commons.wikimedia.org/wiki/File:Greater_sandhill_crane_couple.jpg",
+    "fact": "Sandhill Cranes are ancient: the earliest known fossil, found in a Florida shell pit, is about 2.5 million years old. Their chicks can leave the nest within 8 hours of hatching and can even swim.",
+    "source": "https://www.allaboutbirds.org/guide/Sandhill_Crane/",
+    "question": "How soon after hatching can a Sandhill Crane chick leave the nest?",
+    "answer": "Within about 8 hours, and it can even swim."
   }
 ]
